@@ -1,0 +1,76 @@
+*.user
+*.userosscache
+*.suo
+*.obj
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.log
+*.vspscc
+*.vssscc
+*.vcxproj.user
+*.vcxproj.filters
+
+# Visual Studio Code
+.vscode/
+
+# Build-артефакты
+Debug/
+Release/
+x64/
+x86/
+[Aa][Rr][Mm]*/
+[Bb]uild*/
+
+# Файлы CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Папка настроек Visual Studio
+.vs/
+
+# Бинарные файлы
+*.dll
+*.lib
+*.ocx
+*.so
+*.a
+*.lo
+*.la
+
+# Файлы сборки
+build/
+*.o
+*.obj
+*.gch
+*.out
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# Тестовые артефакты
+Testing/
+TestResults/
+
+# Исключение для временных файлов
+*.ipch
+*.tlog
+*.idb
+*.opendb
+
+# Исключение для локальных файлов IDE
+*.idea/
+*.ipynb_checkpoints/
+*.DS_Store
+Thumbs.db
+
+# Системные файлы
+desktop.ini
