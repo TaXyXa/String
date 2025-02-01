@@ -1,6 +1,7 @@
 *.user
 *.userosscache
 *.suo
+*.sln
 *.obj
 *.exe
 *.pdb
