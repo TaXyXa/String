@@ -10,9 +10,9 @@ public:
     String(const String& otherString);
     void operator=(const String& otherString);
     String(const char* cStyleString);
-    void operator=(const char* cStyleString);
-    String(String&& otherString);
-    void operator=(String&& otherString);
+    String& operator=(const char* cStyleString);
+    String(String&& otherString) noexcept;
+    String& operator=(String&& otherString) noexcept;
     void operator+=(const String& otherString);
     //for right interpretate like c-string
     operator char*();
@@ -28,6 +28,8 @@ public:
 
 
 private:
+    void CopyCString(const char* cStyleString);
+
     MemoryHandler data; 
     size_t size;
     size_t capacity;

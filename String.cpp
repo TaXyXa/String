@@ -5,36 +5,47 @@
 #include "String.h"
 
     String::String(const String& otherString)
+        :data(otherString.capacity),
+        size(otherString.size),
+        capacity(otherString.capacity)
     {
-
+        CopyCString(otherString.begin());
     }
+    
     void String::operator=(const String& otherString) {
-
+        data = MemoryHandler(otherString.capacity);
+        size = otherString.size;
+        capacity = otherString.capacity;
+        CopyCString(otherString.begin());
     }
+
     String::String(const char* cStyleString)
     {
         size = std::strlen(cStyleString);
         capacity = 2 * size;
         data = MemoryHandler(capacity);
-        for (int i = 0; i < size; i++) {
-            data[i] = cStyleString[i];
-        }
-        data[size + 1] = '\0';
+        CopyCString(cStyleString);
     }
-    void String::operator=(const char* cStyleString) {
+
+    String& String::operator=(const char* cStyleString) {
         size = std::strlen(cStyleString);
         capacity = 2 * size;
         data = MemoryHandler(capacity);
-        for (int i = 0; i < size; i++) {
-            data[i] = cStyleString[i];
-        }
-        data[size + 1] = '\0';
+        CopyCString(cStyleString);
+        return *this;
     }
-    String::String(String&& otherString) {
 
-    }
-    void String::operator=(String&& otherString) {
+    String::String(String&& otherString) noexcept
+        :data(std::move(otherString.data)),
+        size(std::move(otherString.size)),
+        capacity(std::move(otherString.capacity))
+    {}
 
+    String& String::operator=(String&& otherString) noexcept {
+        data = std::move(otherString.data);
+        size = std::move(otherString.size);
+        capacity = std::move(otherString.capacity);
+        return *this;
     }
     
     void String::operator+=(const String& otherString) {
@@ -70,4 +81,10 @@
     }
     size_t String::Capacity() const noexcept {
         return capacity;
+    }
+    void String::CopyCString(const char* cStyleString){
+        for (int i = 0; i < size; i++) {
+            data[i] = cStyleString[i];
+        }
+        data[size] = '\0';
     }

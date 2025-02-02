@@ -33,7 +33,7 @@ public:
     size_t GetCapacity();
 
 private:
-    char* buffer_ptr;
+    char* buffer_ptr = nullptr;
     size_t capacity = 0;
 
     char* Allocate(size_t n);
