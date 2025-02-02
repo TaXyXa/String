@@ -10,9 +10,6 @@ public:
     MemoryHandler(MemoryHandler&& otherMemory) noexcept;
     MemoryHandler& operator=(MemoryHandler&& otherMemory) noexcept;
 
-    //MemoryHandler(const char* otherMemory) noexcept;
-    //MemoryHandler& operator=(const char* otherMemory) noexcept;
-
     explicit MemoryHandler(size_t size)
     : capacity(size),
     buffer_ptr(Allocate(size))

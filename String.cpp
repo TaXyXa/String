@@ -10,7 +10,7 @@ String::String(const String& otherString)
     capacity(otherString.capacity)
 {
     if (otherString.begin() != nullptr) {
-        std::strcpy(data.GetAddress(), otherString.begin());
+        strcpy_s(data.GetAddress(), capacity, otherString.begin());
     }
 }
 
@@ -21,33 +21,25 @@ String::String(size_t num)
 {
     data[num] = '\0';
 }
-void String::operator=(const String& otherString) {
-    data = MemoryHandler(otherString.capacity);
-    size = otherString.size;
-    capacity = otherString.capacity;
-    if (otherString.begin() != nullptr) {
-        std::strcpy(data.GetAddress(), otherString.begin());
-    }
+String& String::operator=(const String& otherString) {
+    String NewString(otherString);
+    Swap(NewString);
+    return *this;
 }
 
 String::String(const char* cStyleString)
+    :size (std::strlen(cStyleString)),
+    capacity (2 * std::strlen(cStyleString) + 1),
+    data (2 * std::strlen(cStyleString) + 1)
 {
-    size = std::strlen(cStyleString);
-    capacity = 2 * size + 1;
-    data = MemoryHandler(capacity);
-    //std::strcpy(data.GetAddress(), cStyleString);
     if (size != 0) {
-        std::strcpy(data.GetAddress(), cStyleString);
+        strcpy_s(data.GetAddress(), capacity, cStyleString);
     }
 }
 
 String& String::operator=(const char* cStyleString) {
-    size = std::strlen(cStyleString);
-    capacity = 2 * size + 1;
-    data = MemoryHandler(capacity);
-    if (size != 0) {
-        std::strcpy(data.GetAddress(), cStyleString);
-    }
+    String NewString(cStyleString);
+    Swap(NewString);
     return *this;
 }
 
@@ -58,14 +50,41 @@ String::String(String&& otherString) noexcept
 {}
 
 String& String::operator=(String&& otherString) noexcept {
-    data = std::move(otherString.data);
-    size = std::move(otherString.size);
-    capacity = std::move(otherString.capacity);
+    if (*this != otherString) {
+        Swap(otherString);
+
+    }
     return *this;
 }
 
+String& String::operator+=(const char* otherString) {
+    if (std::strlen(otherString) == 0) {
+        return *this;
+    }
+    if (capacity > size + std::strlen(otherString)) {
+        strcpy_s(begin() + size, capacity, otherString);
+    } else {
+        size_t new_capacity = size + std::strlen(otherString) + 1;
+        MemoryHandler new_data(new_capacity);
+        strcpy_s(new_data.GetAddress(), new_capacity, data.GetAddress());
+        strcpy_s(new_data.GetAddress() + size, new_capacity - size, otherString);
+        data.Swap(new_data);
+    }
+    return *this;
+}
 String& String::operator+=(const String& otherString) {
-
+    if (otherString.Size() == 0) {
+        return *this;
+    }
+    if (capacity > size + otherString.Size()) {
+        strcpy_s(begin() + size, capacity, otherString.begin());
+    } else {
+        size_t new_capacity = size + otherString.Size() + 1;
+        MemoryHandler new_data(new_capacity);
+        strcpy_s(new_data.GetAddress(), new_capacity, data.GetAddress());
+        strcpy_s(new_data.GetAddress() + size, new_capacity - size, otherString.begin());
+        data.Swap(new_data);
+    }
     return *this;
 }
 //for right interpretate like c-string
@@ -100,10 +119,16 @@ size_t String::Capacity() const noexcept {
     return capacity;
 }
 
+void String::Swap(String& otherString) {
+    std::swap(data, otherString.data);
+    std::swap(size, otherString.size);
+    std::swap(capacity, otherString.capacity);
+}
+
 String String::Concatenate(const char* lhs, size_t lhs_size, const char* rhs, size_t rhs_size) {
     String result(lhs_size + rhs_size);
-    std::strcpy(result.begin(), lhs);
-    std::strcpy(result.begin() + lhs_size, rhs);
+    strcpy_s(result.begin(), lhs_size + 1, lhs);
+    strcpy_s(result.begin() + lhs_size, rhs_size + 1, rhs);
     return result;
 }
 

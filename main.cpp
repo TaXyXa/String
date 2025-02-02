@@ -7,7 +7,9 @@
 int main() {
 	MemoryHandlerTest();
 	StringTest();
-	String hiii = String("Hello") + " world";
-	std::cout << hiii << std::endl;
+	String hiii;
+	hiii = "Hello";
+	hiii += " world";
+	std::cout << hiii << hiii.Size() << hiii.Capacity() << std::endl;
 	return 0;
 }

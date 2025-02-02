@@ -77,7 +77,8 @@ void StringTest() {
         assert(NewString.Capacity() == 23);
     }
     { // copy from c=style operator
-        String NewString = "Hi new char";
+        String NewString;
+        NewString = "Hi new char";
         assert(*NewString.begin() == 'H');
         assert(*NewString.end() == '\0');
         assert(NewString.Size() == 11);
@@ -95,7 +96,7 @@ void StringTest() {
     { // move from other String constructor
         String OldString("Hi new char");
         char* old_ptr = OldString.begin();
-        int old_size = OldString.Size();
+        size_t old_size = OldString.Size();
         String NewString(std::move(OldString));
         assert(OldString.begin() == nullptr);
         assert(NewString.begin() == old_ptr);
@@ -106,7 +107,7 @@ void StringTest() {
     { // copy from other String operator
         String OldString("Hi new char");
         char* old_ptr = OldString.begin();
-        int old_size = OldString.Size();
+        size_t old_size = OldString.Size();
         String NewString = std::move(OldString);
         assert(OldString.begin() == nullptr);
         assert(NewString.begin() == old_ptr);

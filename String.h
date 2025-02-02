@@ -9,11 +9,15 @@ public:
     String() = default;
     String(size_t size);
     String(const String& otherString);
-    void operator=(const String& otherString);
-    String(const char* cStyleString);
+    String& operator=(const String& otherString);
+
+    explicit String(const char* cStyleString);
     String& operator=(const char* cStyleString);
+
     String(String&& otherString) noexcept;
     String& operator=(String&& otherString) noexcept;
+
+    String& operator+=(const char* otherString);
     String& operator+=(const String& otherString);
     //for right interpretate like c-string
     operator const char*() const;
@@ -28,7 +32,8 @@ public:
 
     size_t Size() const noexcept;
     size_t Capacity() const noexcept;
- 
+    void Swap(String& otherString);
+
     friend String operator+(const String& lhs, const char* rhs);
     friend String operator+(const char* lhs, const String& rhs);
     friend String operator+(const String& lhs, const String& rhs);
