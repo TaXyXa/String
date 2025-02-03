@@ -52,19 +52,19 @@ String::String(String&& otherString) noexcept
 String& String::operator=(String&& otherString) noexcept {
     if (*this != otherString) {
         Swap(otherString);
-
     }
     return *this;
 }
 
 String& String::operator+=(const char* otherString) {
-    if (std::strlen(otherString) == 0) {
+    size_t otherSize = std::strlen(otherString);
+    if (otherSize == 0) {
         return *this;
     }
-    if (capacity > size + std::strlen(otherString)) {
+    if (capacity > size + otherSize) {
         strcpy_s(begin() + size, capacity, otherString);
     } else {
-        size_t new_capacity = size + std::strlen(otherString) + 1;
+        size_t new_capacity = size + otherSize + 1;
         MemoryHandler new_data(new_capacity);
         strcpy_s(new_data.GetAddress(), new_capacity, data.GetAddress());
         strcpy_s(new_data.GetAddress() + size, new_capacity - size, otherString);
@@ -72,21 +72,28 @@ String& String::operator+=(const char* otherString) {
     }
     return *this;
 }
-String& String::operator+=(const String& otherString) {
-    if (otherString.Size() == 0) {
-        return *this;
-    }
-    if (capacity > size + otherString.Size()) {
-        strcpy_s(begin() + size, capacity, otherString.begin());
-    } else {
-        size_t new_capacity = size + otherString.Size() + 1;
-        MemoryHandler new_data(new_capacity);
-        strcpy_s(new_data.GetAddress(), new_capacity, data.GetAddress());
-        strcpy_s(new_data.GetAddress() + size, new_capacity - size, otherString.begin());
-        data.Swap(new_data);
-    }
-    return *this;
+/*String& String::operator+=(const String& otherString) {
+    return *this += otherString.begin();
 }
+bool String::operator<(const char* otherString) {
+    return std::strcmp(begin(), otherString) < 0;
+}
+bool String::operator<(const String& otherString) {
+    return *this < otherString;
+}
+bool String::operator>(const char* otherString) {
+    return otherString < *this;
+}
+bool String::operator>(const String& otherString) {
+    return otherString < *this;
+}
+bool String::operator==(const char* otherString) {
+    return !(*this < otherString) && !(otherString < *this);
+}
+bool String::operator==(const String& otherString) {
+    return !(*this < otherString) && !(otherString < *this);
+}*/
+
 //for right interpretate like c-string
 String::operator const char*() const {
     return data.GetAddress();

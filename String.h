@@ -19,6 +19,13 @@ public:
 
     String& operator+=(const char* otherString);
     String& operator+=(const String& otherString);
+
+/*    bool operator<(const char* otherString);
+    bool operator<(const String& otherString);
+    bool operator>(const char* otherString);
+    bool operator>(const String& otherString);
+    bool operator==(const char* otherString);
+    bool operator==(const String& otherString);*/
     //for right interpretate like c-string
     operator const char*() const;
     operator char*();
