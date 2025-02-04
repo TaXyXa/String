@@ -72,27 +72,27 @@ String& String::operator+=(const char* otherString) {
     }
     return *this;
 }
-/*String& String::operator+=(const String& otherString) {
+String& String::operator+=(const String& otherString) {
     return *this += otherString.begin();
 }
 bool String::operator<(const char* otherString) {
-    return std::strcmp(begin(), otherString) < 0;
+    return Compare(begin(), otherString) < 0;
 }
 bool String::operator<(const String& otherString) {
-    return *this < otherString;
+    return Compare(begin(), otherString.begin()) < 0;
 }
 bool String::operator>(const char* otherString) {
-    return otherString < *this;
+    return Compare(otherString, begin()) < 0;
 }
 bool String::operator>(const String& otherString) {
-    return otherString < *this;
+    return Compare(otherString.begin(), begin()) < 0;
 }
 bool String::operator==(const char* otherString) {
-    return !(*this < otherString) && !(otherString < *this);
+    return !(*this < otherString) && !(*this > otherString);
 }
 bool String::operator==(const String& otherString) {
-    return !(*this < otherString) && !(otherString < *this);
-}*/
+    return !(*this < otherString) && !(*this > otherString);
+}
 
 //for right interpretate like c-string
 String::operator const char*() const {
@@ -138,6 +138,11 @@ String String::Concatenate(const char* lhs, size_t lhs_size, const char* rhs, si
     strcpy_s(result.begin() + lhs_size, rhs_size + 1, rhs);
     return result;
 }
+
+int String::Compare(const char* lhs, const char* rhs) {
+    return std::strcmp(lhs, rhs);
+}
+
 
 String operator+(const String& lhs, const char* rhs) {
     return String::Concatenate(lhs.begin(), lhs.size, rhs, std::strlen(rhs));
