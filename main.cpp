@@ -1,21 +1,27 @@
+#include <algorithm>
+#include <cctype>
 #include <iostream>
+#include <vector>
 
 #include "MemoryHandler.h"
 #include "String.h"
 #include "Test.h"
 
-int main() {
+int main(int argc, char* argv[]) {
 	MemoryHandlerTest();
 	StringTest();
-	String hiii;
-	hiii = "Hello";
-	hiii += " world";
-	String good("good");
-	//good += hiii;
-	std::cout << hiii << hiii.Size() << hiii.Capacity()  << std::endl;
-	std::cout << good << good.Size() << good.Capacity()  << std::endl;
-	std::cout << (good < "Good") << std::strcmp(good.begin(), "Good") << std::endl;
-	std::cout << (good > "Good") << std::endl;
-	std::cout << (good == "Good") << std::endl;
+	std::vector<String> lines;
+	for (int i = 1; i < argc; i++) {
+		lines.emplace_back(argv[i]);
+		for (char& ch : lines[i - 1]) {
+			ch = std::tolower(ch);
+		}
+	}
+	std::sort(lines.begin(), lines.end(), [](const String& lhs, const String& rhs) {
+		return lhs > rhs;
+	});
+	for (const auto& line : lines) {
+		std::cout << line << '\n';
+	}
 	return 0;
 }

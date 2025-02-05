@@ -41,8 +41,6 @@ void MemoryHandlerTest() {
 	swapHandler[4] = 'o';
 	swapHandler[5] = '\0';
 	moveHandler.Swap(swapHandler);
-	std::cout << "Move Handler "<< moveHandler.GetAddress() << std::endl;
-	std::cout << "Swap Handler "<< swapHandler.GetAddress() << std::endl;
 }
 
 void StringTest() {
@@ -57,7 +55,7 @@ void StringTest() {
         String NewString(5);
         assert(NewString.begin() != nullptr);
         assert(*NewString.end() == '\0');
-        assert(NewString.Size() == 5);
+        assert(NewString.Size() == 0);
         assert(NewString.Capacity() == 11);
     }
     { // copy from c=style constructor
@@ -114,5 +112,64 @@ void StringTest() {
         assert(NewString.Size() == old_size);
         assert(*(NewString.begin() + 3) == 'n');
         assert(NewString.Capacity() == 23);
+    }
+    { // += const char* with reallocate
+        String FirstString("Hi");
+        const char* SecondString = " new char";
+        FirstString+=SecondString;
+        assert(strcmp(FirstString.begin(), "Hi new char") == 0);
+        assert(*(FirstString.begin() + 11) == '\0');
+        assert(FirstString.Size() == 11);
+        assert(FirstString.Capacity() == 23);
+    }
+    { // += const char* without reallocate
+        String FirstString(15);
+        const char* SecondString = "Hi new char";
+        FirstString+=SecondString;
+        assert(strcmp(FirstString.begin(), SecondString) == 0);
+        assert(*(FirstString.begin() + 11) == '\0');
+        assert(FirstString.Size() == 11);
+        assert(FirstString.Capacity() == 31);
+    }   
+    { // += String with reallocate
+        String FirstString("Hi");
+        String SecondString(" new char");
+        FirstString+=SecondString;
+        assert(strcmp(FirstString.begin(), "Hi new char") == 0);
+        assert(*(FirstString.begin() + 11) == '\0');
+        assert(FirstString.Size() == 11);
+        assert(FirstString.Capacity() == 23);
+    }
+    { // += String without reallocate
+        String FirstString(15);
+        String SecondString("Hi new char");
+        FirstString+=SecondString;
+        assert(strcmp(FirstString.begin(), SecondString.begin()) == 0);
+        assert(*(FirstString.begin() + 11) == '\0');
+        assert(FirstString.Size() == 11);
+        assert(FirstString.Capacity() == 31);
+    }
+    { // += ""
+        String FirstString("Hi");
+        const char* SecondString = "";
+        FirstString+=SecondString;
+        assert(strcmp(FirstString.begin(), "Hi") == 0);
+        assert(FirstString.Size() == 2);
+        assert(FirstString.Capacity() == 5);
+    }
+
+    { // < == > const char*
+        String FirstString("first");
+        const char* SecondString = "second";
+        assert(FirstString < SecondString);
+        assert(!(FirstString > SecondString));
+        assert(FirstString == "first");
+    }
+    { // < == > String
+        String FirstString("first");
+        String SecondString ("second");
+        assert(FirstString < SecondString);
+        assert(!(FirstString > SecondString));
+        assert(FirstString == "first");
     }
 }

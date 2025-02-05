@@ -20,12 +20,12 @@ public:
     String& operator+=(const char* otherString);
     String& operator+=(const String& otherString);
 
-    bool operator<(const char* otherString);
-    bool operator<(const String& otherString);
-    bool operator>(const char* otherString);
-    bool operator>(const String& otherString);
-    bool operator==(const char* otherString);
-    bool operator==(const String& otherString);
+    bool operator<(const char* otherString) const;
+    bool operator<(const String& otherString) const;
+    bool operator>(const char* otherString) const;
+    bool operator>(const String& otherString) const;
+    bool operator==(const char* otherString) const;
+    bool operator==(const String& otherString) const;
     //for right interpretate like c-string
     operator const char*() const;
     operator char*();
@@ -48,8 +48,9 @@ private:
 
     static String Concatenate(const char* lhs, size_t lhs_size, const char* rhs, size_t rhs_size);
     static int Compare(const char* lhs, const char* rhs);
-    
-    MemoryHandler data; 
-    size_t size = 0;
-    size_t capacity = 0;
+    static size_t CalcCapacity(size_t size);
+
+    size_t size_ = 0;
+    size_t capacity_ = 0;
+    MemoryHandler data_; 
 };
