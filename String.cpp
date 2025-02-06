@@ -4,14 +4,12 @@
 #include "MemoryHandler.h"
 #include "String.h"
 
-String::String(const String& otherString)
-    :data_(otherString.capacity_),
-    size_(otherString.size_),
-    capacity_(otherString.capacity_)
+String::String() 
+    :size_(0),
+    capacity_(CalcCapacity(0)),
+    data_(CalcCapacity(0))
 {
-    if (otherString.begin() != nullptr) {
-        strcpy_s(data_.GetAddress(), capacity_, otherString.begin());
-    }
+    data_[0] = '\0';
 }
 
 String::String(size_t size)
@@ -21,25 +19,46 @@ String::String(size_t size)
 {
     data_[0] = '\0';
 }
+
+String::String(const String& otherString)
+    :size_(otherString.size_),
+    capacity_(otherString.capacity_),
+    data_(otherString.capacity_)
+{
+    strcpy_s(data_.GetAddress(), capacity_, otherString.begin());
+}
+
 String& String::operator=(const String& otherString) {
-    String NewString(otherString);
-    Swap(NewString);
+    if (*this != otherString) {
+        if (capacity_ > otherString.Size()) {
+            strcpy_s(data_.GetAddress(), capacity_, otherString.begin());
+        } else {
+            String NewString(otherString);
+            Swap(NewString);
+        }
+    }
     return *this;
 }
 
 String::String(const char* cStyleString)
-    :size_ (std::strlen(cStyleString)),
-    capacity_ (CalcCapacity(std::strlen(cStyleString))),
-    data_ (CalcCapacity(std::strlen(cStyleString)))
+    :size_ (cStyleString ? std::strlen(cStyleString) : 0),
+    capacity_ (CalcCapacity(cStyleString ? std::strlen(cStyleString) : 0)),
+    data_ (CalcCapacity(cStyleString ? std::strlen(cStyleString) : 0))
 {
-    if (size_ != 0) {
+    if (cStyleString) {
         strcpy_s(data_.GetAddress(), capacity_, cStyleString);
+    } else {
+        data_[0] = '\0';
     }
 }
 
 String& String::operator=(const char* cStyleString) {
-    String NewString(cStyleString);
-    Swap(NewString);
+    if (cStyleString && capacity_ > std::strlen(cStyleString)) {
+        strcpy_s(data_.GetAddress(), capacity_, cStyleString);
+    } else {
+        String NewString(cStyleString);
+        Swap(NewString);
+    }
     return *this;
 }
 
@@ -57,12 +76,16 @@ String& String::operator=(String&& otherString) noexcept {
 }
 
 String& String::operator+=(const char* otherString) {
+    if (!otherString) {
+        return *this;
+    }
     size_t otherSize = std::strlen(otherString);
     if (otherSize == 0) {
         return *this;
     }
+
     if (capacity_ > size_ + otherSize) {
-        strcpy_s(begin() + size_, capacity_ - size_, otherString);
+        strcpy_s(end(), capacity_ - size_, otherString);
     } else {
         size_t new_capacity = CalcCapacity(size_ + otherSize);
         MemoryHandler new_data(new_capacity);
@@ -84,16 +107,16 @@ bool String::operator<(const String& otherString) const {
     return Compare(begin(), otherString.begin()) < 0;
 }
 bool String::operator>(const char* otherString) const {
-    return Compare(otherString, begin()) < 0;
+    return Compare(begin(), otherString) > 0;
 }
 bool String::operator>(const String& otherString) const {
-    return Compare(otherString.begin(), begin()) < 0;
+    return Compare(begin(), otherString.begin()) > 0;
 }
 bool String::operator==(const char* otherString) const {
-    return !(*this < otherString) && !(*this > otherString);
+    return Compare(begin(), otherString) == 0;
 }
 bool String::operator==(const String& otherString) const {
-    return !(*this < otherString) && !(*this > otherString);
+    return Compare(begin(), otherString.begin()) == 0;
 }
 
 //for right interpretate like c-string
@@ -103,6 +126,7 @@ String::operator const char*() const {
 String::operator char*() {
     return data_.GetAddress();
 }
+
 String::iterator String::begin() noexcept {
     return data_.GetAddress();
 }
@@ -129,30 +153,43 @@ size_t String::Capacity() const noexcept {
 }
 
 void String::Swap(String& otherString) {
-    std::swap(data_, otherString.data_);
-    std::swap(size_, otherString.size_);
-    std::swap(capacity_, otherString.capacity_);
+    if (*this != otherString) {
+        data_.Swap(otherString.data_);
+        std::swap(size_, otherString.size_);
+        std::swap(capacity_, otherString.capacity_);
+    }
 }
 
-String String::Concatenate(const char* lhs, size_t lhs_size, const char* rhs, size_t rhs_size) {
-    String result(lhs_size + rhs_size);
-    strcpy_s(result.begin(), lhs_size + 1, lhs);
-    strcpy_s(result.begin() + lhs_size, rhs_size + 1, rhs);
+String String::Concatenate(const char* lhs, const char* rhs) {
+    size_t size = 0;
+    if (lhs) {
+        size += std::strlen(lhs);
+    }    
+    if (rhs) {
+        size += std::strlen(rhs);
+    }
+    String result(size);
+    result += lhs;
+    result += rhs;
     return result;
 }
 
+//lhs must be valid
 int String::Compare(const char* lhs, const char* rhs) {
+    if (!rhs) {
+        return std::strcmp(lhs, '\0');
+    }
     return std::strcmp(lhs, rhs);
 }
 
 String operator+(const String& lhs, const char* rhs) {
-    return String::Concatenate(lhs.begin(), lhs.size_, rhs, std::strlen(rhs));
+    return String::Concatenate(lhs.cbegin(), rhs);
 }
 String operator+(const char* lhs, const String& rhs) {
-    return String::Concatenate(lhs, std::strlen(lhs), rhs.begin(), rhs.size_);
+    return String::Concatenate(lhs, rhs.cbegin());
 }
 String operator+(const String& lhs, const String& rhs) {
-    return String::Concatenate(lhs.cbegin(), lhs.Size(), rhs.cbegin(), rhs.Size());
+    return String::Concatenate(lhs.cbegin(), rhs.cbegin());
 }
 
 size_t String::CalcCapacity(size_t size) {

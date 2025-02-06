@@ -4,54 +4,54 @@
 #include "MemoryHandler.h"
 
 MemoryHandler::MemoryHandler(MemoryHandler&& otherMemory) noexcept 
-:buffer_ptr(std::move(otherMemory.buffer_ptr)),
-capacity(otherMemory.capacity)
+:buffer_ptr_(std::move(otherMemory.buffer_ptr_)),
+capacity_(std::move(otherMemory.capacity_))
 {
-    otherMemory.buffer_ptr = nullptr;
+    otherMemory.buffer_ptr_ = nullptr;
 }
 
 MemoryHandler& MemoryHandler::operator=(MemoryHandler&& otherMemory) noexcept {
     if (this != &otherMemory) {
-        buffer_ptr = std::move(otherMemory.buffer_ptr);
-        capacity = otherMemory.capacity;
-        otherMemory.buffer_ptr = nullptr;
+        buffer_ptr_ = std::move(otherMemory.buffer_ptr_);
+        capacity_ = otherMemory.capacity_;
+        otherMemory.buffer_ptr_ = nullptr;
     }
     return *this;
 }
 
 MemoryHandler::~MemoryHandler() {
-    Deallocate(buffer_ptr);
+    Deallocate(buffer_ptr_);
 }
 
 char* MemoryHandler::operator+(size_t offset) noexcept {
-    return buffer_ptr + offset;
+    return buffer_ptr_ + offset;
 }
 const char* MemoryHandler::operator+(size_t offset) const noexcept {
-    return buffer_ptr + offset;
+    return buffer_ptr_ + offset;
 }
 char& MemoryHandler::operator[](size_t index) noexcept {
-    assert(index < capacity);
-    return buffer_ptr[index];
+    assert(index < capacity_);
+    return buffer_ptr_[index];
 }
 const char& MemoryHandler::operator[](size_t index) const noexcept {
-    assert(index < capacity);
-    return buffer_ptr[index];
+    assert(index < capacity_);
+    return buffer_ptr_[index];
 }
 
-void MemoryHandler::Swap(MemoryHandler& other) {
-    std::swap(buffer_ptr, other.buffer_ptr);
-    std::swap(capacity, other.capacity);
+void MemoryHandler::Swap(MemoryHandler& other) noexcept {
+    std::swap(buffer_ptr_, other.buffer_ptr_);
+    std::swap(capacity_, other.capacity_);
 }
 
 char* MemoryHandler::GetAddress() noexcept {
-    return buffer_ptr;
+    return buffer_ptr_;
 }
 const char* MemoryHandler::GetAddress() const noexcept {
-    return buffer_ptr;
+    return buffer_ptr_;
 }
 
-size_t MemoryHandler::GetCapacity() {
-    return capacity;
+size_t MemoryHandler::GetCapacity() noexcept {
+    return capacity_;
 }
 
 char* MemoryHandler::Allocate(size_t n) {

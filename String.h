@@ -6,8 +6,8 @@ public:
     using iterator = char*;
     using const_iterator = const char*;
 
-    String() = default;
-    String(size_t size);
+    String();
+    explicit String(size_t size);
     String(const String& otherString);
     String& operator=(const String& otherString);
 
@@ -46,7 +46,7 @@ public:
     friend String operator+(const String& lhs, const String& rhs);
 private:
 
-    static String Concatenate(const char* lhs, size_t lhs_size, const char* rhs, size_t rhs_size);
+    static String Concatenate(const char* lhs, const char* rhs);
     static int Compare(const char* lhs, const char* rhs);
     static size_t CalcCapacity(size_t size);
 
@@ -54,3 +54,7 @@ private:
     size_t capacity_ = 0;
     MemoryHandler data_; 
 };
+
+String operator+(const String& lhs, const char* rhs);
+String operator+(const char* lhs, const String& rhs);
+String operator+(const String& lhs, const String& rhs);

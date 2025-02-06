@@ -10,18 +10,19 @@
 int main(int argc, char* argv[]) {
 	MemoryHandlerTest();
 	StringTest();
-	std::vector<String> lines;
+	std::vector<std::pair<String, String>> lines_lowlines;
 	for (int i = 1; i < argc; i++) {
-		lines.emplace_back(argv[i]);
-		for (char& ch : lines[i - 1]) {
+		lines_lowlines.emplace_back(argv[i], argv[i]);
+		for (char& ch : lines_lowlines[i - 1].second) {
 			ch = std::tolower(ch);
 		}
 	}
-	std::sort(lines.begin(), lines.end(), [](const String& lhs, const String& rhs) {
-		return lhs > rhs;
+	std::sort(lines_lowlines.begin(), lines_lowlines.end(), []
+	(const std::pair<String, String>& lhs, const std::pair<String, String>& rhs) {
+		return lhs.second > rhs.second;
 	});
-	for (const auto& line : lines) {
-		std::cout << line << '\n';
+	for (const auto& line : lines_lowlines) {
+		std::cout << line.first << '\n';
 	}
 	return 0;
 }

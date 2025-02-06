@@ -11,8 +11,8 @@ public:
     MemoryHandler& operator=(MemoryHandler&& otherMemory) noexcept;
 
     explicit MemoryHandler(size_t size)
-    : capacity(size),
-    buffer_ptr(Allocate(size))
+    : capacity_(size),
+    buffer_ptr_(Allocate(size))
     {}
 
     ~MemoryHandler();
@@ -22,16 +22,16 @@ public:
     char& operator[](size_t index) noexcept;
     const char& operator[](size_t index) const noexcept;
 
-    void Swap(MemoryHandler& other);
+    void Swap(MemoryHandler& other) noexcept;
 
     char* GetAddress() noexcept;
     const char* GetAddress() const noexcept;
 
-    size_t GetCapacity();
+    size_t GetCapacity() noexcept;
 
 private:
-    char* buffer_ptr = nullptr;
-    size_t capacity = 0;
+    char* buffer_ptr_ = nullptr;
+    size_t capacity_ = 0;
 
     char* Allocate(size_t n);
     void Deallocate(char* ptr);

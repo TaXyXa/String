@@ -46,14 +46,14 @@ void MemoryHandlerTest() {
 void StringTest() {
     { // empty constructor
         String NewString;
-        assert(NewString.begin() == nullptr);
-        assert(NewString.end() == nullptr);
+        assert(*NewString.begin() == '\0');
+        assert(*NewString.end() == '\0');
         assert(NewString.Size() == 0);
-        assert(NewString.Capacity() == 0);
+        assert(NewString.Capacity() == 1);
     }
     { // size constructor
         String NewString(5);
-        assert(NewString.begin() != nullptr);
+        assert(*NewString.begin() == '\0');
         assert(*NewString.end() == '\0');
         assert(NewString.Size() == 0);
         assert(NewString.Capacity() == 11);
@@ -64,6 +64,9 @@ void StringTest() {
         assert(*NewString.end() == '\0');
         assert(NewString.Size() == 11);
         assert(NewString.Capacity() == 23);
+        String NullString(nullptr);
+        assert(*NullString.begin() == '\0');
+        assert(NullString.Capacity() == 1);
     }
     { // copy from other String constructor
         String OldString("Hi new char");
@@ -96,7 +99,6 @@ void StringTest() {
         char* old_ptr = OldString.begin();
         size_t old_size = OldString.Size();
         String NewString(std::move(OldString));
-        assert(OldString.begin() == nullptr);
         assert(NewString.begin() == old_ptr);
         assert(NewString.Size() == old_size);
         assert(*(NewString.begin() + 3) == 'n');
@@ -107,7 +109,6 @@ void StringTest() {
         char* old_ptr = OldString.begin();
         size_t old_size = OldString.Size();
         String NewString = std::move(OldString);
-        assert(OldString.begin() == nullptr);
         assert(NewString.begin() == old_ptr);
         assert(NewString.Size() == old_size);
         assert(*(NewString.begin() + 3) == 'n');
@@ -157,7 +158,16 @@ void StringTest() {
         assert(FirstString.Size() == 2);
         assert(FirstString.Capacity() == 5);
     }
-
+    { // + operator
+        String Sum;
+        String FirstString("Hi");
+        String SecondString(" new char");
+        Sum = FirstString + SecondString;
+        assert(strcmp(Sum.begin(), "Hi new char") == 0);
+        assert(*(Sum.begin() + 11) == '\0');
+        assert(Sum.Size() == 11);
+        assert(Sum.Capacity() == 23);
+    }
     { // < == > const char*
         String FirstString("first");
         const char* SecondString = "second";
