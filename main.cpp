@@ -8,8 +8,8 @@
 #include "Test.h"
 
 int main(int argc, char* argv[]) {
-	MemoryHandlerTest();
-	StringTest();
+	//MemoryHandlerTest();
+	//StringTest();
 	std::vector<std::pair<String, String>> lines_lowlines;
 	for (int i = 1; i < argc; i++) {
 		lines_lowlines.emplace_back(argv[i], argv[i]);
@@ -22,7 +22,8 @@ int main(int argc, char* argv[]) {
 		return lhs.second > rhs.second;
 	});
 	for (const auto& line : lines_lowlines) {
-		std::cout << line.first << '\n';
+		std::cout << line.first << ' ';
 	}
+	std::cout << std::endl;
 	return 0;
 }
