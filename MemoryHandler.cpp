@@ -19,6 +19,11 @@ MemoryHandler& MemoryHandler::operator=(MemoryHandler&& otherMemory) noexcept {
     return *this;
 }
 
+MemoryHandler::MemoryHandler(size_t size)
+    : capacity_(size),
+    buffer_ptr_(Allocate(size))
+{}
+
 MemoryHandler::~MemoryHandler() {
     Deallocate(buffer_ptr_);
 }

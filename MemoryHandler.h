@@ -10,10 +10,7 @@ public:
     MemoryHandler(MemoryHandler&& otherMemory) noexcept;
     MemoryHandler& operator=(MemoryHandler&& otherMemory) noexcept;
 
-    explicit MemoryHandler(size_t size)
-    : capacity_(size),
-    buffer_ptr_(Allocate(size))
-    {}
+    explicit MemoryHandler(size_t size);
 
     ~MemoryHandler();
 
