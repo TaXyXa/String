@@ -12,4 +12,7 @@ Features
 Example in main.cpp file takes strings as arguments and returns 
 them sorted in reverse lexicographical order, ignoring case.
 
+To use, enter into the command prompt 
+".\String.exe your words list" 
+
 P.S. If you don't use MSVC compiler you need change strcpy_s to strcpy
