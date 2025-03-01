@@ -1,35 +1,36 @@
 #pragma once
 
-class MemoryHandler {
+class MemoryHandler
+{
 public:
-					MemoryHandler()		=	default;
+    MemoryHandler() = default;
 
-					MemoryHandler( const MemoryHandler& otherMemory )	=	delete;
-	MemoryHandler&	operator=( const MemoryHandler& otherMemory )		=	delete;
+    MemoryHandler(const MemoryHandler &otherMemory) = delete;
+    MemoryHandler &operator=(const MemoryHandler &otherMemory) = delete;
 
-					MemoryHandler( MemoryHandler&& otherMemory ) noexcept;
-	MemoryHandler&	operator=( MemoryHandler&& otherMemory ) noexcept;
+    MemoryHandler(MemoryHandler &&otherMemory) noexcept;
+    MemoryHandler &operator=(MemoryHandler &&otherMemory) noexcept;
 
-	explicit		MemoryHandler( size_t size );
+    explicit MemoryHandler(size_t size);
 
-					~MemoryHandler();
+    ~MemoryHandler();
 
-	char*			operator+( size_t offset ) noexcept;
-	const char*		operator+( size_t offset ) const noexcept;
-	char&			operator[]( size_t index ) noexcept;
-	const char&		operator[]( size_t index ) const noexcept;
+    char *operator+(size_t offset) noexcept;
+    const char *operator+(size_t offset) const noexcept;
+    char &operator[](size_t index) noexcept;
+    const char &operator[](size_t index) const noexcept;
 
-	void			Swap( MemoryHandler& other ) noexcept;
+    void Swap(MemoryHandler &other) noexcept;
 
-	char*			GetAddress() noexcept;
-	const char*		GetAddress() const noexcept;
+    char *GetAddress() noexcept;
+    const char *GetAddress() const noexcept;
 
-	size_t			GetCapacity() noexcept;
+    size_t GetCapacity() const noexcept;
 
 private:
-	char*			buffer_ptr_			=	nullptr;
-	size_t			capacity_			=	0;
+    char *buffer_ptr_ = nullptr;
+    size_t capacity_ = 0;
 
-	char*			Allocate( size_t n );
-	void			Deallocate( char* ptr );
+    char *Allocate(size_t n);
+    void Deallocate(char *ptr);
 };
