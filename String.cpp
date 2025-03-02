@@ -15,7 +15,7 @@ String::String(size_t size) : size_(0), data_(CalcCapacity(size))
 }
 
 String::String(const String &otherString)
-    : size_(otherString.size_), data_(otherString.GetCapacity())
+    : size_(otherString.GetSize()), data_(otherString.GetCapacity())
 {
     strcpy_s(data_.GetAddress(), GetCapacity(), otherString.begin());
 }
@@ -27,11 +27,12 @@ String &String::operator=(const String &otherString)
         if (GetCapacity() > otherString.GetSize())
         {
             strcpy_s(data_.GetAddress(), GetCapacity(), otherString.begin());
+            size_ = otherString.GetSize();
         }
         else
         {
-            String NewString(otherString);
-            Swap(NewString);
+            String new_string(otherString);
+            Swap(new_string);
         }
     }
     return *this;
@@ -39,7 +40,7 @@ String &String::operator=(const String &otherString)
 
 String::String(const char *cStyleString)
     : size_(cStyleString ? std::strlen(cStyleString) : 0),
-      data_(CalcCapacity(cStyleString ? std::strlen(cStyleString) : 0))
+      data_(CalcCapacity(size_))
 {
     if (cStyleString)
     {
@@ -53,20 +54,13 @@ String::String(const char *cStyleString)
 
 String &String::operator=(const char *cStyleString)
 {
-    if (cStyleString && GetCapacity() > std::strlen(cStyleString))
-    {
-        strcpy_s(data_.GetAddress(), GetCapacity(), cStyleString);
-    }
-    else
-    {
-        String NewString(cStyleString);
-        Swap(NewString);
-    }
+    String new_string(cStyleString);
+    Swap(new_string);
     return *this;
 }
 
 String::String(String &&otherString) noexcept
-    : data_(std::move(otherString.data_)), size_(std::move(otherString.size_))
+    : size_(std::move(otherString.size_)), data_(std::move(otherString.data_))
 {
 }
 
@@ -85,31 +79,33 @@ String &String::operator+=(const char *otherString)
     {
         return *this;
     }
-    size_t otherSize = std::strlen(otherString);
-    if (otherSize == 0)
+
+    size_t other_size = std::strlen(otherString);
+    if (other_size == 0)
     {
         return *this;
     }
 
-    if (GetCapacity() > size_ + otherSize)
+    if (GetCapacity() > size_ + other_size)
     {
         strcpy_s(end(), GetCapacity() - size_, otherString);
     }
     else
     {
-        size_t new_capacity = CalcCapacity(size_ + otherSize);
+        size_t new_capacity = CalcCapacity(size_ + other_size);
         MemoryHandler new_data(new_capacity);
         strcpy_s(new_data.GetAddress(), new_capacity, data_.GetAddress());
         strcpy_s(new_data.GetAddress() + size_, new_capacity - size_, otherString);
         data_.Swap(new_data);
     }
-    size_ += otherSize;
+    size_ += other_size;
     return *this;
 }
 String &String::operator+=(const String &otherString)
 {
     return *this += otherString.begin();
 }
+
 bool String::operator<(const char *otherString) const
 {
     return Compare(begin(), otherString) < 0;
@@ -169,10 +165,12 @@ String::const_iterator String::end() const noexcept
 {
     return cend();
 }
+
 size_t String::GetSize() const noexcept
 {
     return size_;
 }
+
 size_t String::GetCapacity() const noexcept
 {
     return data_.GetCapacity();
@@ -198,10 +196,10 @@ String String::Concatenate(const char *lhs, const char *rhs)
     {
         size += std::strlen(rhs);
     }
-    String result(size);
-    result += lhs;
-    result += rhs;
-    return result;
+    String new_string(size);
+    new_string += lhs;
+    new_string += rhs;
+    return new_string;
 }
 
 // lhs must be valid
@@ -218,10 +216,12 @@ String operator+(const String &lhs, const char *rhs)
 {
     return String::Concatenate(lhs.cbegin(), rhs);
 }
+
 String operator+(const char *lhs, const String &rhs)
 {
     return String::Concatenate(lhs, rhs.cbegin());
 }
+
 String operator+(const String &lhs, const String &rhs)
 {
     return String::Concatenate(lhs.cbegin(), rhs.cbegin());

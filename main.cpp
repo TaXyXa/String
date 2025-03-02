@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
 {
     // MemoryHandlerTest();
     // StringTest();
+
+    // container of original line and lowercase line
     std::vector<std::pair<String, String>> lines_lowlines;
     for (int i = 1; i < argc; i++)
     {
@@ -20,8 +22,7 @@ int main(int argc, char *argv[])
             ch = std::tolower(ch);
         }
     }
-    std::sort(lines_lowlines.begin(),
-              lines_lowlines.end(),
+    std::sort(lines_lowlines.begin(), lines_lowlines.end(),
               [](const std::pair<String, String> &lhs, const std::pair<String, String> &rhs)
               {
                   return lhs.second > rhs.second;

@@ -9,6 +9,7 @@ public:
 
     String();
     explicit String(size_t size);
+
     String(const String &otherString);
     String &operator=(const String &otherString);
 
@@ -51,6 +52,7 @@ private:
     static int Compare(const char *lhs, const char *rhs);
     static size_t CalcCapacity(size_t size);
 
+    // size_ must be first data member
     size_t size_ = 0;
     MemoryHandler data_;
 };
